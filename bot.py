@@ -1,4 +1,5 @@
 import sys
+import os
 import glob
 import importlib
 from pathlib import Path
@@ -21,6 +22,17 @@ from plugins import web_server, check_expired_premium
 from LucyBot.Bot import Codeflix
 from LucyBot.util.keepalive import ping_server
 from LucyBot.Bot.clients import initialize_clients
+from aiohttp import web
+
+async def home(request):
+    return web.Response(text="OK")
+
+app = web.Application()
+app.router.add_get("/", home)
+
+runner = web.AppRunner(app)
+await runner.setup()
+await web.TCPSite(runner, "0.0.0.0", int(os.environ.get("PORT", 8080))).start()
 
 logging.config.fileConfig('logging.conf')
 logging.getLogger().setLevel(logging.INFO)
